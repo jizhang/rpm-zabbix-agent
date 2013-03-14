@@ -1,5 +1,5 @@
 Summary: Zabbix Agent
-Name: zabbix-agent
+Name: zabbix-agent-ops
 Version: 2.0.5
 Release: 1
 Group: Networking/Admin
@@ -8,7 +8,7 @@ Packager: Ji ZHANG <jizhang@anjuke.com>
 License: GPLv2
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
-%define prefix /usr/local/zabbix-agent
+%define prefix /usr/local/zabbix-agent-ops
 
 %description
 Zabbix Agent
@@ -26,7 +26,7 @@ cd $RPM_BUILD_DIR/zabbix-2.0.5
 %install
 cd $RPM_BUILD_DIR/zabbix-2.0.5
 make install DESTDIR=$RPM_BUILD_ROOT
-install -D -m0755 misc/init.d/fedora/core5/zabbix_agentd $RPM_BUILD_ROOT/etc/init.d/zabbix_agentd
+install -D -m0755 misc/init.d/fedora/core5/zabbix_agentd $RPM_BUILD_ROOT/etc/init.d/%{name}
 mkdir -p $RPM_BUILD_ROOT/%{prefix}/var
 
 %clean
@@ -41,7 +41,7 @@ rm -fr $RPM_BUILD_ROOT
 %config(noreplace) %{prefix}/etc/*.conf.d
 %{prefix}/share
 %attr(755,zabbix,zabbix) %{prefix}/var
-%attr(755,root,root) /etc/init.d/zabbix_agentd
+%attr(755,root,root) /etc/init.d/%{name}
 
 %post
 if [ $1 -eq 1 ]; then
@@ -58,19 +58,19 @@ if [ $1 -eq 1 ]; then
         useradd -M -s /sbin/nologin -g zabbix zabbix
     fi
 
-    chkconfig --add zabbix_agentd
-    chkconfig --level 345 zabbix_agentd on
-    service zabbix_agentd start
+    chkconfig --add %{name}
+    chkconfig --level 345 %{name} on
+    service %{name} start
 fi
 
 %preun
 if [ $1 -eq 0 ]; then
-    service zabbix_agentd stop
-    chkconfig --del zabbix_agentd
+    service %{name} stop
+    chkconfig --del %{name}
 fi
 
 %postun
 if [ $1 -ge 1 ]; then
-    service zabbix_agentd condrestart
+    service %{name} condrestart
 fi
 

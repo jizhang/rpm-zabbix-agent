@@ -26,7 +26,7 @@ cd $RPM_BUILD_DIR/zabbix-2.0.5
 %install
 cd $RPM_BUILD_DIR/zabbix-2.0.5
 make install DESTDIR=$RPM_BUILD_ROOT
-install -D -m0755 $RPM_SOURCE_DIR/zabbix_agentd $RPM_BUILD_ROOT/etc/init.d/zabbix_agentd
+install -D -m0755 misc/init.d/fedora/core5/zabbix_agentd $RPM_BUILD_ROOT/etc/init.d/zabbix_agentd
 mkdir -p $RPM_BUILD_ROOT/%{prefix}/var
 
 %clean

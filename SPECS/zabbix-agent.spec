@@ -1,7 +1,7 @@
 Summary: Zabbix Agent
 Name: zabbix-agent-ops
 Version: 2.0.5
-Release: 1
+Release: 2
 Group: Networking/Admin
 Source: zabbix-2.0.5.tar.gz
 Packager: Ji ZHANG <jizhang@anjuke.com>
@@ -43,7 +43,7 @@ rm -fr $RPM_BUILD_ROOT
 %attr(755,zabbix,zabbix) %{prefix}/var
 %attr(755,root,root) /etc/init.d/%{name}
 
-%post
+%pre
 if [ $1 -eq 1 ]; then
     user_check="`grep zabbix /etc/passwd | wc -l`"
     group_check="`grep zabbix /etc/group | wc -l`"
@@ -57,7 +57,10 @@ if [ $1 -eq 1 ]; then
     then
         useradd -M -s /sbin/nologin -g zabbix zabbix
     fi
+fi
 
+%post
+if [ $1 -eq 1 ]; then
     chkconfig --add %{name}
     chkconfig --level 345 %{name} on
     service %{name} start

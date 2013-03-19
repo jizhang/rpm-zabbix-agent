@@ -1,7 +1,7 @@
 Summary: Zabbix Agent
 Name: zabbix-agent-ops
 Version: 2.0.5
-Release: 2
+Release: 3
 Group: Networking/Admin
 Source: zabbix-2.0.5.tar.gz
 Packager: Ji ZHANG <jizhang@anjuke.com>
@@ -26,8 +26,22 @@ cd $RPM_BUILD_DIR/zabbix-2.0.5
 %install
 cd $RPM_BUILD_DIR/zabbix-2.0.5
 make install DESTDIR=$RPM_BUILD_ROOT
-install -D -m0755 misc/init.d/fedora/core5/zabbix_agentd $RPM_BUILD_ROOT/etc/init.d/%{name}
-mkdir -p $RPM_BUILD_ROOT/%{prefix}/var
+
+# conf.d
+install -D -m0644 $RPM_SOURCE_DIR/extra.conf $RPM_BUILD_ROOT%{prefix}/etc/zabbix_agentd.conf.d/extra.conf
+
+# var
+mkdir -p $RPM_BUILD_ROOT%{prefix}/var
+
+# service
+install -D -m0755 $RPM_BUILD_DIR/zabbix-2.0.5/misc/init.d/fedora/core5/zabbix_agentd $RPM_BUILD_ROOT/etc/init.d/%{name}
+
+# cron
+install -D -m0644 $RPM_SOURCE_DIR/cron.conf $RPM_BUILD_ROOT/etc/cron.d/%{name}
+
+# iostat
+install -D -m0755 $RPM_SOURCE_DIR/iostat-cron.sh $RPM_BUILD_ROOT%{prefix}/bin/iostat-cron.sh
+install -D -m0755 $RPM_SOURCE_DIR/iostat-check.sh $RPM_BUILD_ROOT%{prefix}/bin/iostat-check.sh
 
 %clean
 rm -fr $RPM_BUILD_ROOT
@@ -36,12 +50,16 @@ rm -fr $RPM_BUILD_ROOT
 %dir %{prefix}
 %{prefix}/bin
 %{prefix}/sbin
+%{prefix}/share
+
 %dir %{prefix}/etc
 %config(noreplace) %{prefix}/etc/*.conf
 %config(noreplace) %{prefix}/etc/*.conf.d
-%{prefix}/share
-%attr(755,zabbix,zabbix) %{prefix}/var
-%attr(755,root,root) /etc/init.d/%{name}
+
+%attr(-,zabbix,zabbix) %{prefix}/var
+
+/etc/init.d/%{name}
+/etc/cron.d/%{name}
 
 %pre
 if [ $1 -eq 1 ]; then
@@ -55,7 +73,7 @@ if [ $1 -eq 1 ]; then
 
     if [[ $group_check -eq 0 ]];
     then
-        useradd -M -s /sbin/nologin -g zabbix zabbix
+        useradd -M -d %{prefix}/var -s /sbin/nologin -g zabbix zabbix
     fi
 fi
 

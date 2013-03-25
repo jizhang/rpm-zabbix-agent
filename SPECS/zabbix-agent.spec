@@ -1,7 +1,7 @@
 Summary: Zabbix Agent
 Name: zabbix-agent-ops
 Version: 2.0.5
-Release: 3
+Release: 4
 Group: Networking/Admin
 Source: zabbix-2.0.5.tar.gz
 Packager: Ji ZHANG <jizhang@anjuke.com>
@@ -27,8 +27,8 @@ cd $RPM_BUILD_DIR/zabbix-2.0.5
 cd $RPM_BUILD_DIR/zabbix-2.0.5
 make install DESTDIR=$RPM_BUILD_ROOT
 
-# conf.d
-install -D -m0644 $RPM_SOURCE_DIR/extra.conf $RPM_BUILD_ROOT%{prefix}/etc/zabbix_agentd.conf.d/extra.conf
+# extra.conf
+install -D -m0644 $RPM_SOURCE_DIR/extra.conf $RPM_BUILD_ROOT%{prefix}/etc/extra.conf
 
 # var
 mkdir -p $RPM_BUILD_ROOT%{prefix}/var
@@ -40,6 +40,7 @@ install -D -m0755 $RPM_BUILD_DIR/zabbix-2.0.5/misc/init.d/fedora/core5/zabbix_ag
 install -D -m0644 $RPM_SOURCE_DIR/cron.conf $RPM_BUILD_ROOT/etc/cron.d/%{name}
 
 # iostat
+install -D -m0755 $RPM_SOURCE_DIR/dev-discovery.sh $RPM_BUILD_ROOT%{prefix}/bin/dev-discovery.sh
 install -D -m0755 $RPM_SOURCE_DIR/iostat-cron.sh $RPM_BUILD_ROOT%{prefix}/bin/iostat-cron.sh
 install -D -m0755 $RPM_SOURCE_DIR/iostat-check.sh $RPM_BUILD_ROOT%{prefix}/bin/iostat-check.sh
 
@@ -53,8 +54,11 @@ rm -fr $RPM_BUILD_ROOT
 %{prefix}/share
 
 %dir %{prefix}/etc
-%config(noreplace) %{prefix}/etc/*.conf
-%config(noreplace) %{prefix}/etc/*.conf.d
+%{prefix}/etc/extra.conf
+%config(noreplace) %{prefix}/etc/zabbix_agentd.conf
+%config(noreplace) %{prefix}/etc/zabbix_agentd.conf.d
+%config(noreplace) %{prefix}/etc/zabbix_agent.conf
+%config(noreplace) %{prefix}/etc/zabbix_agent.conf.d
 
 %attr(-,zabbix,zabbix) %{prefix}/var
 

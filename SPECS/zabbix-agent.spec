@@ -4,7 +4,7 @@ Version: 2.0.5
 Release: 4
 Group: Networking/Admin
 Source: zabbix-2.0.5.tar.gz
-Packager: Ji ZHANG <jizhang@anjuke.com>
+Packager: Ji ZHANG <zhangji87@gmail.com>
 License: GPLv2
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
